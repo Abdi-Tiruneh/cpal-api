@@ -20,9 +20,9 @@ spring:
   # ---------------------------------------------------------------------------
   datasource:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: ${DB_URL:jdbc:sqlserver://localhost:1433;databaseName=commercepal;encrypt=true;trustServerCertificate=true}
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:Password123!}
     hikari:
       minimum-idle: ${DB_POOL_MIN_IDLE:10}
       maximum-pool-size: ${DB_POOL_MAX_SIZE:50}
@@ -210,17 +210,17 @@ server:
 # jwt.*      → JwtTokenProvider, JwtTokenExpirationProperties
 app:
   init:
-    enabled: ${APP_INIT_ENABLED}
-    customer-default-password: ${APP_INIT_CUSTOMER_DEFAULT_PASSWORD:}
+    enabled: ${APP_INIT_ENABLED:false}
+    customer-default-password: ${APP_INIT_CUSTOMER_DEFAULT_PASSWORD:DefaultPass123!}
     create-all-roles: ${APP_INIT_CREATE_ALL_ROLES:true}
     super-admin:
-      email: ${APP_INIT_SUPER_ADMIN_EMAIL:}
-      phone: ${APP_INIT_SUPER_ADMIN_PHONE:}
-      employee-id: ${APP_INIT_SUPER_ADMIN_EMPLOYEE_ID:}
-      default-password: ${APP_INIT_DEFAULT_PASSWORD:}
+      email: ${APP_INIT_SUPER_ADMIN_EMAIL:admin@commercepal.com}
+      phone: ${APP_INIT_SUPER_ADMIN_PHONE:254700000000}
+      employee-id: ${APP_INIT_SUPER_ADMIN_EMPLOYEE_ID:EMP001}
+      default-password: ${APP_INIT_DEFAULT_PASSWORD:AdminPass123!}
 
 jwt:
-  secret: ${JWT_SECRET}
+  secret: ${JWT_SECRET:dummy_secret_for_ci_environments_only_32_chars_long}
   issuer: ${JWT_ISSUER:commercepal-api}
   audience: ${JWT_AUDIENCE:commercepal-users}
   expiration:
