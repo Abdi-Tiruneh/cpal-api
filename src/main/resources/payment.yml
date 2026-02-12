@@ -1,0 +1,238 @@
+# ========================
+# Hello Cash Payments
+# ========================
+payment:
+  hello:
+    cash:
+      authenticate: ${HELLO_CASH_AUTHENTICATE_URL}
+      authenticate.principal: ${HELLO_CASH_AUTHENTICATE_PRINCIPAL}
+      authenticate.credentials: ${HELLO_CASH_AUTHENTICATE_CREDENTIALS}
+      authenticate.system: ${HELLO_CASH_AUTHENTICATE_SYSTEM}
+      initiate:
+        payment: ${HELLO_CASH_INITIATE_PAYMENT_URL}
+      validate:
+        payment: ${HELLO_CASH_VALIDATE_PAYMENT_URL}
+
+  # ========================
+  # M-PESA Configuration
+  # ========================
+  mpesa:
+    auth:
+      url: ${MPESA_AUTH_URL}
+      username: ${MPESA_AUTH_USERNAME}
+      password: ${MPESA_AUTH_PASSWORD}
+      shortcode: ${MPESA_AUTH_SHORTCODE}
+      passkey: ${MPESA_AUTH_PASSKEY}
+      callbackUrl: ${MPESA_AUTH_CALLBACK_URL}
+      transactionType: ${MPESA_AUTH_TRANSACTION_TYPE}
+      transactionDesc: ${MPESA_AUTH_TRANSACTION_DESC}
+    checkout:
+      url: ${MPESA_CHECKOUT_URL}
+
+  # ========================
+  # E-BIRR Payments
+  # ========================
+  ebirr:
+    initiate:
+      payment: ${EBIRR_INITIATE_PAYMENT_URL}
+    schemaVersion: ${EBIRR_SCHEMA_VERSION}
+    channelName: ${EBIRR_CHANNEL_NAME}
+    serviceName: ${EBIRR_SERVICE_NAME}
+    merchantUid: ${EBIRR_MERCHANT_UID}
+    paymentMethod: ${EBIRR_PAYMENT_METHOD}
+    apiKey: ${EBIRR_API_KEY}
+    apiUserId: ${EBIRR_API_USER_ID}
+
+  # ========================
+  # CBE BIRR Payments
+  # ========================
+  cbe:
+    birr:
+      payment:
+        url: ${CBE_BIRR_PAYMENT_URL}
+      util:
+        service: ${CBE_BIRR_UTIL_SERVICE_URL}
+      authenticate:
+        userID: ${CBE_BIRR_AUTHENTICATE_USER_ID}
+        credentials: ${CBE_BIRR_AUTHENTICATE_CREDENTIALS}
+        merchantCode: ${CBE_BIRR_AUTHENTICATE_MERCHANT_CODE}
+      min:
+        app:
+          payment:
+            url: ${CBE_BIRR_MIN_APP_PAYMENT_URL}
+            user: ${CBE_BIRR_MIN_APP_PAYMENT_USER_URL}
+          company:
+            name: ${CBE_BIRR_MIN_APP_COMPANY_NAME}
+            tillCode: ${CBE_BIRR_MIN_APP_COMPANY_TILL_CODE}
+          callback:
+            url: ${CBE_BIRR_MIN_APP_CALLBACK_URL}
+
+  # ========================
+  # EPG Payments
+  # ========================
+  epg:
+    initiate:
+      payment: ${EPG_INITIATE_PAYMENT_URL}
+    userName: ${EPG_USERNAME}
+    password: ${EPG_PASSWORD}
+    returnUrl: ${EPG_RETURN_URL}
+
+  # ========================
+  # Amole Payments
+  # ========================
+  amole:
+    signature: ${AMOLE_SIGNATURE}
+    ipAddress: ${AMOLE_IP_ADDRESS}
+    authenticate:
+      userName: ${AMOLE_AUTHENTICATE_USERNAME}
+      password: ${AMOLE_AUTHENTICATE_PASSWORD}
+      amoleMerchantID: ${AMOLE_AUTHENTICATE_MERCHANT_ID}
+    tin: ${AMOLE_TIN}
+    payment:
+      action:
+        authorization: ${AMOLE_PAYMENT_ACTION_AUTHORIZATION}
+        payment: ${AMOLE_PAYMENT_ACTION_PAYMENT}
+      url: ${AMOLE_PAYMENT_URL}
+
+  # ========================
+  # Telebirr Payments
+  # ========================
+  telebirr:
+    shortCode: ${TELEBIRR_SHORT_CODE}
+    appId: ${TELEBIRR_APP_ID}
+    appKey: ${TELEBIRR_APP_KEY}
+    returnUrl: ${TELEBIRR_RETURN_URL}
+    notifyUrl: ${TELEBIRR_NOTIFY_URL}
+    initiate:
+      payment: ${TELEBIRR_INITIATE_PAYMENT_URL}
+      payment.mobile: ${TELEBIRR_INITIATE_PAYMENT_MOBILE_URL}
+    # Telebirr USSD Payments (Huawei SOAP API)
+    ussd:
+      soap-endpoint: ${TELEBIRR_USSD_SOAP_ENDPOINT}
+      command-id: ${TELEBIRR_USSD_COMMAND_ID}
+      third-party-id: ${TELEBIRR_USSD_THIRD_PARTY_ID}
+      password: ${TELEBIRR_USSD_PASSWORD}
+      result-url: ${TELEBIRR_USSD_RESULT_URL}
+      initiator-identifier: ${TELEBIRR_USSD_INITIATOR_IDENTIFIER}
+      security-credential: ${TELEBIRR_USSD_SECURITY_CREDENTIAL}
+      short-code: ${TELEBIRR_USSD_SHORT_CODE}
+      receiver-identifier: ${TELEBIRR_USSD_RECEIVER_IDENTIFIER}
+      currency: ${TELEBIRR_USSD_CURRENCY}
+      caller-type: ${TELEBIRR_USSD_CALLER_TYPE}
+      key-owner: ${TELEBIRR_USSD_KEY_OWNER}
+      primary-identifier-type: ${TELEBIRR_USSD_PRIMARY_IDENTIFIER_TYPE}
+      receiver-identifier-type: ${TELEBIRR_USSD_RECEIVER_IDENTIFIER_TYPE}
+      initiator-identifier-type: ${TELEBIRR_USSD_INITIATOR_IDENTIFIER_TYPE}
+      soap-connection-timeout: ${TELEBIRR_USSD_SOAP_CONNECTION_TIMEOUT}
+      soap-read-timeout: ${TELEBIRR_USSD_SOAP_READ_TIMEOUT}
+      soap-max-connections: ${TELEBIRR_USSD_SOAP_MAX_CONNECTIONS}
+
+  # ========================
+  # Airtime Service Configuration
+  # ========================
+  airtime:
+    service:
+      url: ${AIRTIME_SERVICE_URL}
+      login: ${AIRTIME_SERVICE_LOGIN}
+      password: ${AIRTIME_SERVICE_PASSWORD}
+      gatewayCode: ${AIRTIME_SERVICE_GATEWAY_CODE}
+      gatewayType: ${AIRTIME_SERVICE_GATEWAY_TYPE}
+      servicePort: ${AIRTIME_SERVICE_PORT}
+      sourceType: ${AIRTIME_SERVICE_SOURCE_TYPE}
+      minimum:
+        amount: ${AIRTIME_SERVICE_MINIMUM_AMOUNT}
+      active: ${AIRTIME_SERVICE_ACTIVE}
+
+  # ========================
+  # KasaPay Configuration
+  # ========================
+  kasapay:
+    client-code: ${KASAPAY_CLIENT_CODE}
+    service-code: ${KASAPAY_SERVICE_CODE}
+    iv-key: ${KASAPAY_IV_KEY}
+    access-key: ${KASAPAY_ACCESS_KEY}
+    consumer-secret: ${KASAPAY_CONSUMER_SECRET}
+    redirect-url: ${KASAPAY_REDIRECT_URL}
+    callback-url: ${KASAPAY_CALLBACK_URL}
+    base-url: ${KASAPAY_BASE_URL}
+
+  # ========================
+  # PayPal API Configuration
+  # ========================
+  paypal:
+    client-id: ${PAYPAL_CLIENT_ID}
+    client-secret: ${PAYPAL_CLIENT_SECRET}
+    return-url: ${PAYPAL_RETURN_URL}
+    cancel-url: ${PAYPAL_CANCEL_URL}
+    mode: ${PAYPAL_MODE}
+
+  # ========================
+  # iPay Configuration
+  # ========================
+  ipay:
+    paymentUrl: ${IPAY_PAYMENT_URL}
+    live: ${IPAY_LIVE}
+    mpesa: ${IPAY_MPESA}
+    bonga: ${IPAY_BONGA}
+    airtel: ${IPAY_AIRTEL}
+    equity: ${IPAY_EQUITY}
+    mobilebanking: ${IPAY_MOBILE_BANKING}
+    creditcard: ${IPAY_CREDIT_CARD}
+    unionpay: ${IPAY_UNION_PAY}
+    mvisa: ${IPAY_MVISA}
+    vooma: ${IPAY_VOOMA}
+    pesalink: ${IPAY_PESALINK}
+    invoice: ${IPAY_INVOICE}
+    vid: ${IPAY_VID}
+    currency: ${IPAY_CURRENCY}
+    callback: ${IPAY_CALLBACK}
+    cst: ${IPAY_CST}
+    crl: ${IPAY_CRL}
+    hashKey: ${IPAY_HASH_KEY}
+
+  # ========================
+  # eDahab Payments
+  # ========================
+  edahab:
+    baseUrl: ${EDAHAB_BASE_URL}
+    secretKey: ${EDAHAB_SECRET_KEY}
+    apiKey: ${EDAHAB_API_KEY}
+    agentCode: ${EDAHAB_AGENT_CODE}
+    returnUrl: ${EDAHAB_RETURN_URL}
+    currency: ${EDAHAB_CURRENCY}
+
+  # ========================
+  # WaafiPay Payments
+  # ========================
+  waafiPay:
+    url: ${WAAFIPAY_URL}
+    schemaVersion: ${WAAFIPAY_SCHEMA_VERSION}
+    channelName: ${WAAFIPAY_CHANNEL_NAME}
+    preauthorize:
+      serviceName: ${WAAFIPAY_PREAUTHORIZE_SERVICE_NAME}
+    commit:
+      serviceName: ${WAAFIPAY_COMMIT_SERVICE_NAME}
+    merchantUid: ${WAAFIPAY_MERCHANT_UID}
+    apiUserId: ${WAAFIPAY_API_USER_ID}
+    apiKey: ${WAAFIPAY_API_KEY}
+    paymentMethod: ${WAAFIPAY_PAYMENT_METHOD}
+    currency: ${WAAFIPAY_CURRENCY}
+    transactionCategory: ${WAAFIPAY_TRANSACTION_CATEGORY}
+
+  # ========================
+  # SahayPay Configuration
+  # ========================
+  sahaypay:
+    base-url: ${SAHAYPAY_BASE_URL}
+    username: ${SAHAYPAY_USERNAME}
+    password: ${SAHAYPAY_PASSWORD}
+    callback-url: ${SAHAYPAY_CALLBACK_URL}
+  # ========================
+  # Pesapal Configuration
+  # ========================
+  pesapal:
+    base-url: ${PESAPAL_BASE_URL}
+    consumer-key: ${PESAPAL_CONSUMER_KEY}
+    consumer-secret: ${PESAPAL_CONSUMER_SECRET}
+    ipn: ${PESAPAL_IPN}
+    ipn-url: ${PESAPAL_IPN_URL}
