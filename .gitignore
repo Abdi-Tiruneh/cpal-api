@@ -97,3 +97,5 @@ refactor_orders.py
 change_passwd.exp
 
 src/main/resources/old/
+script/
+postman/
