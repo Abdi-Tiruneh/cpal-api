@@ -1,0 +1,26 @@
+name: Spring Boot CI (Self-hosted Mac)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - name: Who is running this?
+        run: whoami
+
+      - name: Where am I running?
+        run: pwd
+
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Verify Java
+        run: java -version
+
+      - name: Build Spring Boot app
+        run: mvn clean package
