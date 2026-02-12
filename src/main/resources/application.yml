@@ -1,0 +1,442 @@
+# =============================================================================
+# CommercePal API Service - Unified Configuration
+# =============================================================================
+# Single configuration source for all environments (dev/prod).
+# All sensitive and environment-specific values MUST be provided via
+# environment variables (e.g. from .env in development, secrets in production).
+# See .env.prod for the required variable contract.
+# =============================================================================
+
+spring:
+  application:
+    name: api-service
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:default}
+  config:
+    import: optional:classpath:payment.yml
+
+  # ---------------------------------------------------------------------------
+  # Data Source (no defaults for credentials - must be set via env)
+  # ---------------------------------------------------------------------------
+  datasource:
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      minimum-idle: ${DB_POOL_MIN_IDLE:10}
+      maximum-pool-size: ${DB_POOL_MAX_SIZE:50}
+      connection-timeout: ${DB_POOL_CONNECTION_TIMEOUT:20000}
+      idle-timeout: ${DB_POOL_IDLE_TIMEOUT:300000}
+      max-lifetime: ${DB_POOL_MAX_LIFETIME:1200000}
+      pool-name: CommercePalHikariPool
+      leak-detection-threshold: ${DB_POOL_LEAK_DETECTION_MS:60000}
+      register-mbeans: true
+      connection-test-query: SELECT 1
+      validation-timeout: 3000
+
+  # ---------------------------------------------------------------------------
+  # JPA / Hibernate
+  # ---------------------------------------------------------------------------
+  jpa:
+    show-sql: ${JPA_SHOW_SQL:false}
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: ${HIBERNATE_FORMAT_SQL:true}
+        generate_statistics: ${HIBERNATE_STATISTICS:false}
+        dialect: org.hibernate.dialect.SQLServerDialect
+        jdbc:
+          batch_size: 50
+          batch_versioned_data: true
+          fetch_size: 50
+        order_inserts: true
+        order_updates: true
+        connection:
+          release_mode: after_transaction
+    hibernate:
+      ddl-auto: ${DDL_AUTO:none}
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+  # ---------------------------------------------------------------------------
+  # Redis
+  # ---------------------------------------------------------------------------
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: ${REDIS_POOL_MAX_ACTIVE:20}
+          max-idle: ${REDIS_POOL_MAX_IDLE:10}
+          min-idle: ${REDIS_POOL_MIN_IDLE:5}
+          max-wait: 2000ms
+      reactive:
+        timeout: 2000ms
+
+  # ---------------------------------------------------------------------------
+  # Cache
+  # ---------------------------------------------------------------------------
+  cache:
+    type: ${CACHE_TYPE:redis}
+    redis:
+      time-to-live: ${CACHE_TTL_MS:3600000}
+      cache-null-values: false
+      use-key-prefix: true
+      key-prefix: "commercepal:"
+
+  # ---------------------------------------------------------------------------
+  # Async / Task
+  # ---------------------------------------------------------------------------
+  task:
+    execution:
+      pool:
+        core-size: ${ASYNC_CORE_SIZE:10}
+        max-size: ${ASYNC_MAX_SIZE:20}
+        queue-capacity: ${ASYNC_QUEUE_CAPACITY:100}
+        keep-alive: 60s
+      thread-name-prefix: "commercepal-async-"
+    scheduling:
+      pool:
+        size: ${SCHEDULER_POOL_SIZE:5}
+      thread-name-prefix: "commercepal-scheduler-"
+
+  # ---------------------------------------------------------------------------
+  # Transaction
+  # ---------------------------------------------------------------------------
+  transaction:
+    default-timeout: ${TRANSACTION_TIMEOUT:30}
+    rollback-on-commit-failure: true
+
+  # ---------------------------------------------------------------------------
+  # Actuator
+  # ---------------------------------------------------------------------------
+  actuator:
+    endpoints:
+      web:
+        exposure:
+          include: ${ACTUATOR_ENDPOINTS:health,info,metrics,prometheus}
+        base-path: /actuator
+    endpoint:
+      health:
+        show-details: ${ACTUATOR_HEALTH_DETAILS:when-authorized}
+        probes:
+          enabled: true
+
+  # ---------------------------------------------------------------------------
+  # File upload / Servlet
+  # ---------------------------------------------------------------------------
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE:60MB}
+      max-request-size: ${MAX_REQUEST_SIZE:60MB}
+
+  # ---------------------------------------------------------------------------
+  # Templates
+  # ---------------------------------------------------------------------------
+  freemarker:
+    template-loader-path: classpath:/templates
+    settings:
+      auto_import: spring.ftl as spring
+    suffix: .ftl
+  thymeleaf:
+    mode: LEGACYHTML5
+
+  # ---------------------------------------------------------------------------
+  # Mail (credentials from env)
+  # ---------------------------------------------------------------------------
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    protocol: ${MAIL_PROTOCOL:smtps}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        transport:
+          protocol: smtps
+        smtps:
+          auth: true
+          starttls:
+            enable: true
+          timeout: 8000
+
+  # ---------------------------------------------------------------------------
+  # DevTools (disabled by default; enable only in dev via env)
+  # ---------------------------------------------------------------------------
+  devtools:
+    restart:
+      enabled: ${DEVTOOLS_ENABLED:false}
+
+  # ---------------------------------------------------------------------------
+  # MVC / Logging
+  # ---------------------------------------------------------------------------
+  mvc:
+    log-request-details: ${LOG_REQUEST_DETAILS:false}
+
+# =============================================================================
+# Server
+# =============================================================================
+server:
+  port: ${SERVER_PORT:2060}
+  threads:
+    max: ${SERVER_THREADS_MAX:200}
+    min-spare: ${SERVER_THREADS_MIN:10}
+  connection-timeout: ${SERVER_CONNECTION_TIMEOUT:20000}
+  compression:
+    enabled: ${SERVER_COMPRESSION_ENABLED:true}
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+    min-response-size: 1024
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: on_param
+    include-exception: false
+  ssl:
+    enabled: ${SSL_ENABLED:false}
+    key-store-type: ${SSL_KEY_STORE_TYPE:PKCS12}
+    key-store: ${SSL_KEY_STORE:}
+    key-store-password: ${SSL_KEY_STORE_PASSWORD:}
+    key-alias: ${SSL_KEY_ALIAS:commercepal}
+
+# =============================================================================
+# JWT & App Auth (secrets from env only)
+# =============================================================================
+# app.init.* → AppInitProperties. Set in .env (APP_INIT_*) or env vars; loaded by EnvFileLoader.
+# jwt.*      → JwtTokenProvider, JwtTokenExpirationProperties
+app:
+  init:
+    enabled: ${APP_INIT_ENABLED}
+    customer-default-password: ${APP_INIT_CUSTOMER_DEFAULT_PASSWORD:}
+    create-all-roles: ${APP_INIT_CREATE_ALL_ROLES:true}
+    super-admin:
+      email: ${APP_INIT_SUPER_ADMIN_EMAIL:}
+      phone: ${APP_INIT_SUPER_ADMIN_PHONE:}
+      employee-id: ${APP_INIT_SUPER_ADMIN_EMPLOYEE_ID:}
+      default-password: ${APP_INIT_DEFAULT_PASSWORD:}
+
+jwt:
+  secret: ${JWT_SECRET}
+  issuer: ${JWT_ISSUER:commercepal-api}
+  audience: ${JWT_AUDIENCE:commercepal-users}
+  expiration:
+    staff:
+      access-ttl-ms: ${JWT_STAFF_ACCESS_TTL_MS:3600000}
+      refresh-ttl-ms: ${JWT_STAFF_REFRESH_TTL_MS:3600000}
+    customer:
+      access-ttl-ms: ${JWT_CUSTOMER_ACCESS_TTL_MS:604800000}
+      refresh-ttl-ms: ${JWT_CUSTOMER_REFRESH_TTL_MS:604800000}
+    other:
+      access-ttl-ms: ${JWT_OTHER_ACCESS_TTL_MS:86400000}
+      refresh-ttl-ms: ${JWT_OTHER_REFRESH_TTL_MS:86400000}
+
+# =============================================================================
+# Security (tunable via env)
+# =============================================================================
+security:
+  login:
+    max-attempts: ${LOGIN_MAX_ATTEMPTS:10}
+    lock-duration-minutes: ${LOGIN_LOCK_DURATION_MIN:3}
+  reset:
+    max-attempts: ${RESET_MAX_ATTEMPTS:3}
+    lock-duration-minutes: ${RESET_LOCK_DURATION_MIN:15}
+
+# =============================================================================
+# AWS (credentials from env only)
+# =============================================================================
+aws:
+  access_key_id: ${AWS_ACCESS_KEY_ID:}
+  secret_access_key: ${AWS_SECRET_ACCESS_KEY:}
+  s3:
+    bucket: ${AWS_S3_BUCKET:}
+    region: ${AWS_S3_REGION:}
+  images:
+    url: ${AWS_IMAGES_URL:}
+
+# =============================================================================
+# Business / Notifications / Frontend (env-driven)
+# =============================================================================
+org:
+  commerce:
+    pal:
+      loan:
+        request:
+          email: ${LOAN_REQUEST_EMAIL:}
+      notification:
+        sms:
+          notification:
+            endpoint: ${SMS_NOTIFICATION_ENDPOINT:}
+        email:
+          notification:
+            endpoint: ${EMAIL_NOTIFICATION_ENDPOINT:}
+        push:
+          notification:
+            endpoint: ${PUSH_NOTIFICATION_ENDPOINT:}
+          slack:
+            endpoint: ${SLACK_NOTIFICATION_ENDPOINT:}
+      payment:
+        promotion:
+          url: ${PAYMENT_PROMOTION_URL:}
+      slack:
+        report: ${SLACK_WEBHOOK_URL:}
+  java:
+    frontend:
+      base:
+        url: ${FRONTEND_BASE_URL:http://localhost:3000}
+      confirm:
+        email: ${FRONTEND_CONFIRM_EMAIL:${org.java.frontend.base.url}/Login?confirm-email=}
+        reset:
+          token: ${FRONTEND_CONFIRM_RESET:${org.java.frontend.base.url}/ChangePassword?confirm-token=}
+        device:
+          token: ${FRONTEND_CONFIRM_DEVICE:${org.java.frontend.base.url}/ChangePassword?confirm-token}
+    trial:
+      attempts: ${TRIAL_ATTEMPTS:6}
+    user:
+      data:
+        directory: ${USER_DATA_DIRECTORY:./logs}
+    email:
+      sender: ${EMAIL_SENDER:}
+
+# ---------------------------------------------------------------------------
+# Async thread pool (application-level)
+# ---------------------------------------------------------------------------
+async:
+  thread:
+    queue:
+      capacity:
+        size: ${ASYNC_QUEUE_CAPACITY_SIZE:500}
+    core:
+      pool:
+        size: ${ASYNC_CORE_POOL:2}
+    max:
+      pool:
+        size: ${ASYNC_MAX_POOL:5}
+    name:
+      prefix: ${ASYNC_THREAD_PREFIX:java-async-}
+
+support:
+  email: ${SUPPORT_EMAIL:}
+
+# =============================================================================
+# Google OAuth (from env only)
+# =============================================================================
+google:
+  client-id: ${GOOGLE_CLIENT_ID:}
+  client-secret: ${GOOGLE_CLIENT_SECRET:}
+  redirect-uri: ${GOOGLE_REDIRECT_URI:}
+
+# =============================================================================
+# Marketplace / AliExpress
+# =============================================================================
+marketplace:
+  provider:
+    url: ${MARKETPLACE_PROVIDER_URL:}
+  alibaba:
+    url: ${ALIBABA_URL:}
+
+aliexpress:
+  base-url: ${ALIEXPRESS_BASE_URL:}
+
+# =============================================================================
+# Resilience4j
+# =============================================================================
+resilience4j:
+  circuitbreaker:
+    instances:
+      providerApi:
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        slow-call-rate-threshold: 60
+        slow-call-duration-threshold: 5s
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 3
+        minimum-number-of-calls: 5
+        automatic-transition-from-open-to-half-open-enabled: true
+        record-exceptions:
+          - java.lang.Exception
+  ratelimiter:
+    instances:
+      providerApi:
+        limit-for-period: 100
+        limit-refresh-period: 1s
+        timeout-duration: 2s
+  bulkhead:
+    instances:
+      providerApi:
+        max-concurrent-calls: 50
+        max-wait-duration: 500ms
+  timelimiter:
+    instances:
+      providerApi:
+        timeout-duration: 10s
+        cancel-running-future: true
+
+# =============================================================================
+# Portal / POS OAuth (from env)
+# =============================================================================
+portal:
+  user:
+    id: ${PORTAL_USER_ID:}
+    name: ${PORTAL_USER_NAME:}
+    ids: ${PORTAL_USER_IDS:}
+    names: ${PORTAL_USER_NAMES:}
+
+pos:
+  oauth:
+    token:
+      url: ${POS_OAUTH_TOKEN_URL:}
+    grant-type: ${POS_OAUTH_GRANT_TYPE:password}
+    client-id: ${POS_OAUTH_CLIENT_ID:}
+    client-secret: ${POS_OAUTH_CLIENT_SECRET:}
+    username: ${POS_OAUTH_USERNAME:}
+    password: ${POS_OAUTH_PASSWORD:}
+
+# =============================================================================
+# Springdoc OpenAPI
+# =============================================================================
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    try-it-out-enabled: true
+    filter: true
+    csrf:
+      enabled: false
+  show-actuator: true
+  override-with-generic-response: false
+
+# =============================================================================
+# Logging (env-driven; no secrets in patterns)
+# =============================================================================
+logging:
+  level:
+    root: ${LOG_LEVEL_ROOT:INFO}
+    com.commercepal.apiservice: ${LOG_LEVEL_APP:INFO}
+    org.springframework.web: ${LOG_LEVEL_WEB:WARN}
+    org.springframework.security: ${LOG_LEVEL_SECURITY:WARN}
+    org.hibernate:
+      stat: INFO
+      type: INFO
+      SQL: WARN
+    org.springframework.cache: ${LOG_LEVEL_CACHE:INFO}
+    org.springframework.data.redis: ${LOG_LEVEL_REDIS:INFO}
+  pattern:
+    console: "%date| %highlight(%-5level) | %magenta(%-30thread) | api-service | %-30.30logger{0} -%line |%msg%n"
+    file: "%date| %-5level | %-30thread | api-service | %-30.30logger{0} -%line |%msg%n"
+  file:
+    path: ${LOG_PATH:./logs}
+    name: ${LOG_PATH:./logs}/api-service.log
+  logback:
+    rollingpolicy:
+      max-file-size: ${LOG_ROLLING_MAX_SIZE:10MB}
+      max-history: ${LOG_ROLLING_MAX_HISTORY:30}
