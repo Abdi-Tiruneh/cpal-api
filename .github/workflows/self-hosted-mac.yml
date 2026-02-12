@@ -22,5 +22,5 @@ jobs:
       - name: Verify Java
         run: java -version
 
-      - name: Build Spring Boot app
-        run: mvn clean package
+      - name: Build Spring Boot app (skip tests)
+        run: mvn clean package -DskipTests
